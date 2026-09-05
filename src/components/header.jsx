@@ -7,7 +7,7 @@ function DashboardHeader({headerObject}){
                 <h2>Dashboard</h2>
                 <div className="alias">{headerObject?.alias || 'UK'}</div>
             </div>
-            <div>Welcome Back {headerObject?.name || 'Unknown'} 👋</div>
+            <div>Welcome Back, {headerObject?.name || 'Unknown'} <i className="fas fa-hand" style={{ marginLeft: '10px' ,color: '#107ce9'}}></i></div>
         </div>
     )
 }
