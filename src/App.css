@@ -1,52 +1,237 @@
-.card-container {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    height: 100px;
-    border: 1px solid #cccccc;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin: 20px;
-    padding: 10px;
-    border-radius: 10px;
-}
-.card-icon{
-    color: #007bff;
-    font-size: 24px;
-}
-.card-description {
-    margin-left: 10px;
-    font-size: 20px;
-    color: #333333;
-}
-.dashboard-analytics-section{
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0px 10px 0px 25px;
+:root {
+  --bg-page: #0B0B0B;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-blur: blur(16px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-muted: rgba(255, 255, 255, 0.45);
+
+  --success: #97C459;
+  --danger: #F09595;
+  --danger-border: rgba(240, 149, 149, 0.4);
+  --accent: #378ADD;
+  --accent-hover: #2f78c2;
+
+  --font-title: 20px;
+  --font-value-lg: 26px;
+  --font-value: 20px;
+  --font-body: 14px;
+  --font-label: 13px;
+  --font-small: 12px;
 }
 
-.dashboard-header{
-    width: 100%;
-    margin:auto;
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-bottom: 1px solid #cccccc;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
 }
-.header-line-one{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+
+/* === Base === */
+body {
+  background: #0B0B0B;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #FFFFFF;
+  margin: 0;
 }
-.alias{
-    margin-right: 20px;
-    background-color: #107ce9;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    border-radius: 50%;
+
+.dashboard {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+/* === Header === */
+.dashboard-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.5);
+}
+
+.header-line-one {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.header-line-one h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.alias {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(16, 124, 233, 0.2);
+  color: #85B7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dashboard-header > div:last-child {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+}
+
+/* === Category labels === */
+.dashboard-category-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin-bottom: 12px;
+  margin-top: 5%;
+}
+
+/* === Analytics grid === */
+.dashboard-analytics-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "card-1 card-1"
+    "card-2 card-3"
+    "card-4 card-4";
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.card-container {
+  display: flex;
+}
+
+/* === Cards (glassmorphism) === */
+.card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-revenue {
+  padding: 1.25rem 1.5rem;
+}
+
+.card-icon {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 2px;
+}
+
+.card-description {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.card-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.card-revenue .card-value {
+  font-size: 26px;
+  color: #97C459 !important;
+}
+
+.card-debtors .card-value {
+  color: #F09595 !important;
+}
+
+.card-debtors .card-icon {
+  color: #F09595;
+}
+
+.card-stock .card-value {
+  color: #FFFFFF;
+}
+
+/* === Quick actions === */
+.dashboard-quick-actions {
+  margin-top: 0.5rem;
+}
+
+.quick-actions-btn-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quick-actions-btn {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #FFFFFF;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.quick-actions-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.quick-actions-btn:active {
+  transform: scale(0.98);
+}
+
+.quick-actions-btn-icon {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.quick-actions-btn-description {
+  font-size: 14px;
+}
+
+/* Primary action = Add New Item (1st button) */
+.quick-actions-btn-container button:nth-child(1) {
+  background: #378ADD;
+  border: none;
+  color: #FFFFFF;
+}
+
+.quick-actions-btn-container button:nth-child(1):hover {
+  background: #2f78c2;
+}
+
+/* Danger action = Delete Item (3rd button) */
+.quick-actions-btn-container button:nth-child(3) {
+  color: #F09595;
+  border: 1px solid rgba(240, 149, 149, 0.4);
+  background: rgba(240, 149, 149, 0.06);
+}
+
+.quick-actions-btn-container button:nth-child(3):hover {
+  background: rgba(240, 149, 149, 0.12);
 }

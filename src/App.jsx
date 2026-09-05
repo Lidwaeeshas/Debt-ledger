@@ -6,9 +6,9 @@ function App() {
   
 
   return (
-    <>
-    <Dashboard />
-    </>
+    <div data-mode="dark">
+      <Dashboard />
+    </div>
   )
 }
 
