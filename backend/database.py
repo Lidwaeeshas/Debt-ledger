@@ -1,0 +1,52 @@
+from sqlalchemy import Column,Integer,create_engine,String,ForeignKey,Numeric,DateTime,func,Boolean
+from sqlalchemy.orm import Session,relationship,DeclarativeBase,Mapped,MappedColumn
+from decimal import Decimal
+from datetime import datetime,timedelta
+
+
+engine = create_engine("sqlite:///mydb.db")
+
+print(1)
+def two_weeks_from_now_on():
+    return datetime.now() + timedelta(weeks=2)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+
+class Traders(Base):
+    __tablename__ ="traders"
+    id = Column(Integer,primary_key=True)
+    trader_name = Column(String(255))
+    trader_phone_number = Column(String(255),unique=True)
+    debts = relationship("Debts",back_populates="trader")
+
+class Debts(Base):
+    __tablename__ ="debts"
+    id = Column(Integer,primary_key=True,unique=True)
+    debtor_name =Column(String(255))
+    debtor_phone_number=Column(String(255),default="")
+    amount_owes:Mapped[Decimal] = MappedColumn(Numeric(10,2))
+    debt_description = Column(String)
+    guarantor= Column(Boolean,default=False)
+    guarantor_name = Column(String(255),default="")
+    additional_description = Column(String,default="")
+    due_date = Column(DateTime,default=lambda:two_weeks_from_now_on)
+    trader = relationship("Traders",back_populates="debts")
+    partial_payments = relationship("PartialPayments",back_populates="debts")
+    created_at = Column(DateTime,server_default=func.now())
+
+class PartialPayments(Base):
+    __tablename__="partial_payments"
+    id = Column(Integer,primary_key=True)
+    amount = Column(Numeric(10,2))
+    description = Column(String)
+    outstanding_balance = Column(Numeric(10,2))
+    repayment_date = Column(DateTime,server_default=func.now())
+    next_due_date = Column(DateTime,default=lambda:two_weeks_from_now_on)
+    debts = relationship("Debts",back_populates="trader")
+
+def init_db():
+    Base.metadata.create_all(engine)
