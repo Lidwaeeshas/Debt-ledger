@@ -1,21 +1,13 @@
+function QuickActionsBtn({ icon, description, onClick }) {
+  return (
+    <button className="quick-actions-btn" type="button" onClick={onClick}>
+      <span className="quick-actions-btn-icon">
+        <i className={icon}></i>
+      </span>
 
-
-function QuickActionsBtn({ icon, description}) {
-
-    return (
-            
-        <button className="quick-actions-btn">
-            <span className="quick-actions-btn-icon">
-                <i className={icon}></i>
-            </span>
-            
-            <span className="quick-actions-btn-description">
-                {description}
-            </span>
-
-        </button>
-
-    );
+      <span className="quick-actions-btn-description">{description}</span>
+    </button>
+  );
 }
 
 export default QuickActionsBtn;

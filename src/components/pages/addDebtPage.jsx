@@ -1,13 +1,10 @@
 import DebtForm from "../addDebtForm";
 import { useState } from "react";
-import { v4 } from "uuid";
-
+import axios from "axios";
 function AddDebt() {
   const [payload, setPayload] = useState({});
 
-  const getTraderData = () => {
-    const rawTraderData = localStorage.getItem("traderData");
-  };
+  const trader_id = 2;
 
   const handlePayload = (field, value) => {
     setPayload((prev) => ({
@@ -15,24 +12,27 @@ function AddDebt() {
       [field]: value,
     }));
   };
-  const handleSaving = () => {
+
+  const handleSaving = async (e) => {
+    e.preventDefault();
     const myData = {
       debtor_name: payload.costumerName,
-      amount_owes: payload.totalAmount,
+      recievable: payload.totalAmount,
       debtor_phoneNumber: payload.phoneNumber,
-      debt_description: payload.productDescription,
+      liability: payload.productDescription,
       due_date: payload.dueDate,
-      guarantor: payload.guarantor ?? undefined,
+      guarantor: payload.guarantor === "eh" ? true : false,
       guarantor_name: payload.guarantorName,
-      addtional_description: payload.addtionalDescription,
-      id: v4(),
-      trader_id: localStorage.getItem("trader_id"),
+      addtional_description: payload.additionalDescription,
+      trader_id: Number(trader_id),
     };
-    const rawDebts = localStorage.getItem("debts");
-    const debts = rawDebts ? JSON.parse(rawDebts) : [];
-    const updatedDebts = [...debts, myData];
-    localStorage.setItem("debts", JSON.stringify(updatedDebts));
-    console.log("data saved");
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/save-debt", myData, {
+        withCredentials: true,
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -40,7 +40,7 @@ function AddDebt() {
       <div>
         <h2>Shigar Da Bayanin Bashi</h2>
       </div>
-      <form action="submit" className="debt-form">
+      <form onSubmit={handleSaving} className="debt-form">
         <DebtForm
           text="Sunan Customa"
           value={payload.costumerName ?? ""}
@@ -68,7 +68,7 @@ function AddDebt() {
             className="product-description"
             placeholder="rubuta kayan da ya amsa"
             id="product-description"
-            value={payload.productDescription}
+            value={payload.productDescription ?? ""}
             onChange={(e) =>
               handlePayload("productDescription", e.target.value)
             }
@@ -117,13 +117,15 @@ function AddDebt() {
             className="textarea-debt-box"
             placeholder="Karin bayani akan bashin"
             id="additional-info"
-            value={payload.addtionalDescription}
+            value={payload.additionalDescription ?? ""}
             onChange={(e) =>
-              handlePayload("addtionalDescription", e.target.value)
+              handlePayload("additionalDescription", e.target.value)
             }
           ></textarea>
         </div>
-        <button className="save-details">Yi Saving</button>
+        <button className="save-details" type="submit">
+          Save
+        </button>
       </form>
     </div>
   );

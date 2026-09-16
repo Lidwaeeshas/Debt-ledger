@@ -2,73 +2,137 @@ import Card from "../card";
 import DashboardHeader from "../header";
 import QuickActionsBtn from "../actionsBtn";
 import DebtMainDetails from "../debtsProfiles";
-import { useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import DueCard from "../dueCard";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const cards = [
     {
       id: 1,
       icon: "fa-solid fa-money-bill-trend-up",
-      description: "Total Daily Revenue",
+      description: "Total Amount Owed To You",
       value: "$45,231.89",
     },
     {
       id: 2,
       icon: "fa-solid fa-users",
-      description: "Outstanding Debtors",
-      value: "+12,234",
+      description: "Total  Debtors",
+      value: "500",
     },
     {
       id: 3,
       icon: "fa-solid fa-warehouse",
-      description: "Total Items In Stock",
-      value: "+573",
-    },
-    {
-      id: 4,
-      icon: "fa-solid fa-arrow-trend-down",
-      description: "Accounts Receivable",
-      value: "$100,231.89",
+      description: "Overdue Amount",
+      value: "₦ 573,000",
     },
   ];
 
   const quickActions = [
-    { id: 1, icon: "fa-solid fa-plus", description: "Add New Item" },
-    { id: 2, icon: "fa-solid fa-pen-to-square", description: "Update Item" },
-    { id: 3, icon: "fa-solid fa-trash", description: "Delete Item" },
+    { id: 1, icon: "fa-solid fa-plus", description: "New Debt" },
+    { id: 2, icon: "fa-solid fa-pen-to-square", description: "Update Debt" },
+    { id: 3, icon: "fa-solid fa-trash", description: "Delete Debt" },
     {
       id: 4,
       icon: "fa-solid fa-file-invoice-dollar",
-      description: "Generate Invoice",
+      description: "View Debts",
     },
   ];
 
-  const [isRecording, setIsRecording] = useState(false);
-  const handleVoiceRecord = () => {
-    console.log("hello");
+  const debtors = [
+    { name: "John Adeyemi", amount: "$1,200", due_time: "• 3d overdue" },
+    { name: "Grace O.", amount: "$430", due_time: "• due today" },
+    { name: "Tunde K.", amount: "$800", due_time: "• due tomorrow" },
+    { name: "Sarah M.", amount: "$150", due_time: "• due in 2 days" },
+    { name: "Sarah M.", amount: "$150", due_time: "• due in 2 days" },
+  ];
+
+  const [showMore, setShowMore] = useState(false);
+  const visibleDebts = showMore ? debtors : debtors.slice(0, 3);
+
+  const audioChunks = useRef([]);
+  const mediaRecoder = useRef(null);
+  const [startRecording, setStartRecording] = useState(false);
+
+  const startedRecording = async () => {
+    console.log("started recording");
+    audioChunks.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecoder.current = new MediaRecorder(stream);
+      mediaRecoder.current.ondataavailable = (e) => {
+        if (!e.data.size > 0) return;
+        audioChunks.current.push(e.data);
+      };
+      mediaRecoder.current.start();
+      setStartRecording(true);
+    } catch (error) {
+      console.log(String(error));
+    }
   };
+  const stopRecording = () => {
+    if (!mediaRecoder.current) return;
+    mediaRecoder.current.onstop = async () => {
+      const blob = new Blob(audioChunks.current, { type: "audio/webm" });
+      const form = new FormData();
+      form.append("audio", blob, "user_voice.webm");
+      mediaRecoder.current.stream?.getTracks().forEach((track) => track.stop());
+      mediaRecoder.current = null;
+      setStartRecording(false);
+      try {
+        const res = await fetch("http://127.0.0.1:8000/audio", {
+          method: "POST",
+          body: form,
+        });
+        if (!res.ok) throw new Error(`Audio upload failed: ${res.status}`);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    mediaRecoder.current.stop();
+  };
+
+  const handleRecord = () => {
+    if (startRecording) {
+      stopRecording();
+    } else {
+      startedRecording();
+    }
+  };
+
+  const handleQuickAction = (description) => {
+    if (description === "New Debt") navigate("/add-debt");
+    if (description === "Update Debt") {
+      navigate("/debts");
+    }
+    if (description === "View Debts") {
+      navigate("debts");
+    }
+    if (description === "Generate Report") window.print();
+  };
+
   return (
     <div className="dashboard">
-      <DashboardHeader headerObject={{ alias: "JD", name: "John Doe" }} />
+      <DashboardHeader headerObjecst={{ alias: "JD", name: "John Doe" }} />
 
       <div className="voice-board">
         <div className="voice-board-header">
           <h3>Voice Record Keeping</h3>
-          <span className={`voice-status ${isRecording ? "live" : ""}`}>
-            {isRecording ? "Recording…" : "Idle"}
+          <span className={`voice-status ${startRecording ? "live" : ""}`}>
+            {startRecording ? "Recording…" : "Idle"}
           </span>
         </div>
 
         <div className="voice-board-body">
           <button
-            className={`voice-mic-btn ${isRecording ? "recording" : ""}`}
-            onClick={handleVoiceRecord}
+            className={`voice-mic-btn ${startRecording ? "recording" : ""}`}
+            onClick={handleRecord}
           >
             <i className="fa-solid fa-microphone"></i>
           </button>
           <p className="voice-hint">
-            {isRecording ? "Tap to stop" : "Tap to start recording"}
+            {startRecording ? "Tap to stop" : "Tap to start recording"}
           </p>
         </div>
       </div>
@@ -82,6 +146,7 @@ function Dashboard() {
               key={action.id}
               icon={action.icon}
               description={action.description}
+              onClick={() => handleQuickAction(action.description)}
             />
           ))}
         </div>
@@ -89,6 +154,40 @@ function Dashboard() {
 
       <div>
         <span className="dashboard-category-label">Analytics</span>
+
+        {/* due box */}
+
+        <div className="due-container">
+          <h2>
+            <i
+              className="fa-solid fa-triangle-exclamation"
+              aria-hidden="true"
+            ></i>
+            Due now / overdue
+          </h2>
+
+          <div className="due-list">
+            {visibleDebts.map((debtor, index) => {
+              return (
+                <DueCard
+                  key={index}
+                  name={debtor.name}
+                  amount={debtor.amount}
+                  due_time={debtor.due_time}
+                />
+              );
+            })}
+          </div>
+          {debtors.length > 3 && (
+            <button
+              className="see-more-btn"
+              onClick={() => setShowMore(!showMore)}
+            >
+              {showMore ? "See Less" : "See More"}
+            </button>
+          )}
+        </div>
+
         <div className="dashboard-analytics-section">
           {cards.map((card) => (
             <Card key={card.id} cardObject={card} />

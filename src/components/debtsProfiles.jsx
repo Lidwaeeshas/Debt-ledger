@@ -5,7 +5,13 @@ function DebtMainDetails({
   outstanding_balance,
   debt_status,
   due_in,
+  liability,
   id,
+  phoneNumber,
+  description,
+  hasGuarantor,
+  guarantorName,
+  noOfPartialPayment,
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,12 +42,44 @@ function DebtMainDetails({
         </div>
         {isOpen && (
           <div>
+            <div className="more-details">
+              <div className="debt-detail">
+                <span className="debt-detail-label">Liability</span>
+                <span className="liability">{liability || "-"}</span>
+              </div>
+              <div className="debt-detail">
+                <span className="debt-detail-label">Description</span>
+                <span className="description">{description || "-"}</span>
+              </div>
+              <div className="debt-detail">
+                <span className="debt-detail-label">Guarantor</span>
+                <span className="has-guarantor">{hasGuarantor || "-"}</span>
+              </div>
+              <div className="debt-detail">
+                <span className="debt-detail-label">Guarantor name</span>
+                <span className="guarantor-name">{guarantorName || "-"}</span>
+              </div>
+              <div className="debt-detail">
+                <span className="debt-detail-label">Partial payments</span>
+                <span className="number-of-partial-payment">
+                  {noOfPartialPayment ?? 0}
+                </span>
+              </div>
+              <div className="debt-detail">
+                <span className="debt-detail-label">Phone number</span>
+                <span className="phone-number">{phoneNumber || "-"}</span>
+              </div>
+            </div>
             <div className="editable-fields">
               <button
                 className="mark-paid"
                 onClick={() => handleAction("markPaid", id)}
               >
-                <i className="fa-solid fa-mark-circle"></i>Mark Paid
+                <i
+                  className="fa-solid fa-circle-check"
+                  style={{ color: "#97c459" }}
+                ></i>
+                Mark Paid
               </button>
               <button
                 className="add-partial-payment"
@@ -54,11 +92,18 @@ function DebtMainDetails({
                 className="delete-debt"
                 onClick={() => handleAction("markPaid", id)}
               >
-                <i className="fa-solid fa-dutsbin"></i>Delete Debt
+                <i
+                  className="fa-solid fa-trash"
+                  style={{ color: "#f09595" }}
+                ></i>
+                Delete Debt
               </button>
             </div>
             <span className="close-editable" onClick={() => setIsOpen(false)}>
-              🔼
+              <i
+                className="fa-solid fa-chevron-up"
+                style={{ color: "#fff" }}
+              ></i>
             </span>
             <div className="popup-actions">
               {/*partial payment field */}
