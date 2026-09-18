@@ -11,7 +11,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/add-debt" element={<AddDebt />} />
+          <Route path="/add-debt/:payloads" element={<AddDebt />} />
           <Route path="/add-item" element={<AddItem />} />
           <Route path="/debts" element={<DebtList />} />
         </Routes>

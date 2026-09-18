@@ -11,6 +11,7 @@ from decimal import Decimal
 from starlette.middleware.sessions import SessionMiddleware
 from elevenlabs.client import ElevenLabs
 import os
+from agent import json_resonse
 
 two_weeks = datetime.now() + timedelta(weeks=2)
 
@@ -203,10 +204,8 @@ async def audio(request: Request, audio: UploadFile = File(...)):
         transcription = client.speech_to_text.convert(
             file=file_tuple, model_id="scribe_v2", language_code="hau"
         )
-
-        # 4. Print it to your console for testing and return the text
-        print("Transcription text:", transcription.text)
-        return {"status": "success", "text": transcription.text}
+        json_res = json_resonse(transcription.text)
+        return {"status": "success", "json": json_res}
 
     except Exception as e:
         # If something else fails, return a 400 bad request instead of crashing with a 500

@@ -52,9 +52,12 @@ def json_resonse(msg):
         model="gemini-2.5-flash",
         content=msg,
         config=types.GenerateContentConfig(
-            system_instruction=rule, response_mime_type="application/json"
+            system_instruction=system_rules,
+            response_mime_type="application/json",
+            response_schema=DebtLedger,
         ),
     )
+    return DebtLedger.model_validate_json(response.text)
 
 
 agent = creat_react_agent()

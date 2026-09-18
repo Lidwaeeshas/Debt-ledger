@@ -2,7 +2,7 @@ import Card from "../card";
 import DashboardHeader from "../header";
 import QuickActionsBtn from "../actionsBtn";
 import DebtMainDetails from "../debtsProfiles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import DueCard from "../dueCard";
 
@@ -86,6 +86,10 @@ function Dashboard() {
           body: form,
         });
         if (!res.ok) throw new Error(`Audio upload failed: ${res.status}`);
+        else {
+          data = res.json();
+          navigate(`/add-debt/${data}`);
+        }
       } catch (error) {
         console.log(error);
       }

@@ -1,9 +1,13 @@
 import DebtForm from "../addDebtForm";
 import { useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+
 function AddDebt() {
   const [payload, setPayload] = useState({});
+  const { payloads } = useParams();
 
+  payloads ? setPayload(payloads) : payload;
   const trader_id = 2;
 
   const handlePayload = (field, value) => {
@@ -38,35 +42,35 @@ function AddDebt() {
   return (
     <div className="add-debt-container">
       <div>
-        <h2>Shigar Da Bayanin Bashi</h2>
+        <h2>Enter Debt Details</h2>
       </div>
       <form onSubmit={handleSaving} className="debt-form">
         <DebtForm
-          text="Sunan Customa"
+          text="Customer Name"
           value={payload.costumerName ?? ""}
           htmlFor="costomer-naame"
           onClick={() => console.log("comming soon")}
           onChange={(e) => handlePayload("costumerName", e.target.value)}
         />
         <DebtForm
-          text="Numbar Wayan Customa"
+          text="Phone Number"
           value={payload.phoneNumber ?? ""}
           htmlFor="phone-number"
           onChange={(e) => handlePayload("phoneNumber", e.target.value)}
           type="phoneNumber"
         />
         <DebtForm
-          text="Adadin Kudin Da Ake Bin Customa"
+          text="Amount"
           value={payload.totalAmount ?? ""}
           htmlFor="costomer-naame"
           type="number"
           onChange={(e) => handlePayload("totalAmount", e.target.value)}
         />
         <div className="product-description">
-          <label htmlFor="product-description">Wasu Kaya Ya Amsa</label>
+          <label htmlFor="product-description">Liability</label>
           <textarea
             className="product-description"
-            placeholder="rubuta kayan da ya amsa"
+            placeholder="what products does he take"
             id="product-description"
             value={payload.productDescription ?? ""}
             onChange={(e) =>
@@ -75,8 +79,8 @@ function AddDebt() {
           ></textarea>
         </div>
         <DebtForm
-          text="Yaushe Zai Biya"
-          span="yaushe akayi da shi zai biya"
+          text="Repayment Date"
+          span="agreed date for repayment"
           value={payload.dueDate ?? ""}
           htmlFor="due-date"
           onChange={(e) => handlePayload("dueDate", e.target.value)}
@@ -84,8 +88,8 @@ function AddDebt() {
         />
 
         <div className="guarantor-box">
-          <h3>Yana Da Garanto ?</h3>
-          <label htmlFor="eh">Eh</label>
+          <h3>Does this debt requirees guarantor ?</h3>
+          <label htmlFor="eh">Yes</label>
           <input
             type="radio"
             name="guarantor"
@@ -93,7 +97,7 @@ function AddDebt() {
             value="eh"
             onChange={(e) => handlePayload("guarantor", e.target.value)}
           />
-          <label htmlFor="aa">Aa</label>
+          <label htmlFor="aa">No</label>
           <input
             value="aa"
             id="aa"
@@ -103,7 +107,7 @@ function AddDebt() {
           />
           {payload.guarantor === "eh" && (
             <DebtForm
-              text="Sunan Garanto"
+              text="Guarantor Name"
               value={payload.guarantorName ?? ""}
               htmlFor="guarantor"
               onChange={(e) => handlePayload("guarantorName", e.target.value)}
@@ -112,10 +116,10 @@ function AddDebt() {
         </div>
 
         <div className="debt-description">
-          <label htmlFor="additional-info">Karin Bayani</label>
+          <label htmlFor="additional-info">Additional Details</label>
           <textarea
             className="textarea-debt-box"
-            placeholder="Karin bayani akan bashin"
+            placeholder="Additional details regarding the debt"
             id="additional-info"
             value={payload.additionalDescription ?? ""}
             onChange={(e) =>
