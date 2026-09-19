@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+python-multipart
+itsdangerous
+elevenlabs
+google-genai
+pydantic
+psycopg2-binary
