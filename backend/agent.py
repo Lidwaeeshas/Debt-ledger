@@ -49,7 +49,7 @@ def json_resonse(msg):
     Analyze the provided text block and extract the debt ledger information according to the schema.
     """
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.6-flash ",
         contents=msg,
         config=types.GenerateContentConfig(
             system_instruction=system_rules,
