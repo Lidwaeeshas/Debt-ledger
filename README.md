@@ -1,16 +1,69 @@
-# React + Vite
+# Debt Ledger
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Debt Ledger is a voice-enabled debt tracker for small businesses and independent traders. Record who owes money, why they owe it, when repayment is due, and how much remains outstanding from one focused dashboard.
 
-Currently, two official plugins are available:
+The project combines a React and Vite frontend with a FastAPI backend. Its ASR workflow accepts a voice recording, transcribes it with ElevenLabs Scribe, and sends the transcript to Gemini for structured debt-field extraction before opening the add-debt flow.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Dashboard view of amounts owed, debtor count, and overdue balances
+- Debt records with debtor details, liability, due date, phone number, guarantor, and notes
+- Debt list for reviewing and managing records
+- Browser microphone recording for voice-first data entry
+- ASR transcription and structured debt extraction through the backend
+- Responsive UI built with React Router and plain CSS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Stack
 
-## Expanding the ESLint configuration
+- Frontend: React 19, Vite, React Router, Axios
+- Backend: FastAPI, SQLAlchemy, SQLite
+- Voice and extraction: ElevenLabs Scribe and Google Gemini
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Project Structure
+
+```text
+src/                 React application and debt-tracking UI
+backend/main.py      FastAPI routes, ASR upload, and persistence API
+backend/agent.py     Gemini debt-field extraction schema and prompt
+backend/database.py  SQLAlchemy models and SQLite setup
+```
+
+## Getting Started
+
+### Frontend
+
+Requires Node.js 20 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173`.
+
+### Backend
+
+Create a Python environment and install the backend dependencies used by the application:
+
+```bash
+python -m venv .venv
+.venv\\Scripts\\activate
+pip install fastapi uvicorn sqlalchemy python-multipart itsdangerous elevenlabs google-genai pydantic
+uvicorn backend.main:app --reload --port 8000
+```
+
+The voice workflow requires valid provider credentials configured through environment variables before starting the backend. Never commit API keys to source control.
+
+## Scripts
+
+```bash
+npm run dev      # Start the Vite development server
+npm run build    # Create a production build
+npm run lint     # Run ESLint
+npm run preview  # Preview the production build locally
+```
+
+## Status
+
+This is an active portfolio project. The frontend currently includes dashboard demo values while the backend routes are being connected to authenticated, persistent user data. Provider credentials, authentication hardening, and API error handling should be completed before production deployment.
+
