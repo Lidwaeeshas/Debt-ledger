@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Depends, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, Debts, Traders, PartialPayments, init_db
+from backend.database import engine, Debts, Traders, PartialPayments, init_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from contextlib import asynccontextmanager
@@ -11,11 +11,11 @@ from decimal import Decimal
 from starlette.middleware.sessions import SessionMiddleware
 from elevenlabs.client import ElevenLabs
 import os
-from agent import json_resonse
+from backend.agent import json_resonse
 
 two_weeks = datetime.now() + timedelta(weeks=2)
 
-API = "sk_992b9e96884c35df2740891c33aaac32c145c9b561601980"
+API = os.getenv("ELEVEN_LABS_API")
 
 client = ElevenLabs(api_key=API)
 
@@ -86,9 +86,14 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(SessionMiddleware, secret_key="idkicidgaf")
 
+allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+production_origin = os.getenv("FRONTEND_ORIGIN")
+if production_origin:
+    allowed_origins.append(production_origin.rstrip("/"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

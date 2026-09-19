@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import DebtMainDetails from "../debtsProfiles";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function DebtList() {
   const demoDebts = [
     {
@@ -39,7 +41,7 @@ function DebtList() {
 
   const getDebts = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/debts", {
+      const res = await axios.get(`${API_URL}/debts`, {
         withCredentials: true,
       });
       setDebts(res.data);

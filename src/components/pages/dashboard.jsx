@@ -6,6 +6,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import DueCard from "../dueCard";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Dashboard() {
   const navigate = useNavigate();
   const cards = [
@@ -81,7 +83,7 @@ function Dashboard() {
       mediaRecoder.current = null;
       setStartRecording(false);
       try {
-        const res = await fetch("http://127.0.0.1:8000/audio", {
+        const res = await fetch(`${API_URL}/audio`, {
           method: "POST",
           body: form,
         });

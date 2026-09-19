@@ -3,6 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function AddDebt() {
   const [payload, setPayload] = useState({});
   const { payloads } = useParams();
@@ -31,7 +33,7 @@ function AddDebt() {
       trader_id: Number(trader_id),
     };
     try {
-      const res = await axios.post("http://127.0.0.1:8000/save-debt", myData, {
+      await axios.post(`${API_URL}/save-debt`, myData, {
         withCredentials: true,
       });
     } catch (e) {
