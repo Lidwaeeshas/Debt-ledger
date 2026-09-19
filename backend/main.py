@@ -207,7 +207,7 @@ async def audio(request: Request, audio: UploadFile = File(...)):
 
         # 3. Call the transcription service
         transcription = client.speech_to_text.convert(
-            file=file_tuple, model_id="scribe_v2", language_code="hau"
+            file=file_tuple, model_id="scribe_v2"
         )
         json_res = json_resonse(transcription.text)
         return {"status": "success", "json": json_res}
