@@ -2,6 +2,7 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
 from typing import Optional
+import os
 
 api = os.getenv("GEMINI_API")
 
