@@ -1,8 +1,8 @@
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
-from typing import Optional
-import os
+
+api = os.getenv("GEMINI_API")
 
 
 class DebtLedger(BaseModel):
@@ -24,7 +24,7 @@ class DebtLedger(BaseModel):
     )
 
 
-client = genai.Client(api_key=os.getenv("GEMINI_API"))
+client = genai.Client(api_key="")
 
 prompt = """
         You are an agent who perses prompt and extract debt ledger 
@@ -56,3 +56,6 @@ def json_resonse(msg):
         ),
     )
     return DebtLedger.model_validate_json(response.text)
+
+
+agent = creat_react_agent()
