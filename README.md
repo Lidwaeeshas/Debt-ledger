@@ -66,4 +66,3 @@ npm run preview  # Preview the production build locally
 ## Status
 
 This is an active portfolio project. The frontend currently includes dashboard demo values while the backend routes are being connected to authenticated, persistent user data. Provider credentials, authentication hardening, and API error handling should be completed before production deployment.
-
