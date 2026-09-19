@@ -50,7 +50,7 @@ def json_resonse(msg):
     """
     response = client.models.generate_content(
         model="gemini-3.8-flash",
-        input=msg,
+        contents=msg,
         config=types.GenerateContentConfig(
             system_instruction=system_rules,
             response_mime_type="application/json",
