@@ -87,11 +87,11 @@ function Dashboard() {
           method: "POST",
           body: form,
         });
-        if (!res.ok) throw new Error(`Audio upload failed: ${res.status}`);
-        else {
-          data = res.json();
-          navigate(`/add-debt/${data}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || `Audio upload failed: ${res.status}`);
         }
+        navigate(`/add-debt/${data.json}`);
       } catch (error) {
         console.log(error);
       }

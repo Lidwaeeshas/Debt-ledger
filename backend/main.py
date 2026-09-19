@@ -86,7 +86,11 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(SessionMiddleware, secret_key="idkicidgaf")
 
-allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+allowed_origins = [
+    "http://localhost:5173",
+    "https://debt-ledger-fawn.vercel.app",
+    "http://127.0.0.1:5173",
+]
 production_origin = os.getenv("FRONTEND_ORIGIN")
 if production_origin:
     allowed_origins.append(production_origin.rstrip("/"))
