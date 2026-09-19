@@ -1,7 +1,10 @@
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
+import os 
 
+
+api = os.getenv("GEMINI_API")
 
 class DebtLedger(BaseModel):
     debtor_name: str = Field(
@@ -22,7 +25,7 @@ class DebtLedger(BaseModel):
     )
 
 
-client = genai.Client(api_key="")
+client = genai.Client(api_key=api)
 
 prompt = """
         You are an agent who perses prompt and extract debt ledger 
