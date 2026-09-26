@@ -11,8 +11,11 @@ import axios from "axios"
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Dashboard() {
+  
   const [totalRecievable,setTotalRecievable] = useState("-")
-  const [totalDebts,settotalDebts] = useState("-")
+  const [totalDebts,setTotalDebts] = useState("-")
+  const [overdueAmount,setOverdueAmount] = useState("-")
+  const [debtors,setDebtors] = useState("-")
   
   const base = axios.create({
     baseUrl:"https://debt-ledger-dxzv.onrender.com"
@@ -22,9 +25,14 @@ function Dashboard() {
     try{
     const response = await axios.get("/all-deebts")
     const data = response.data
-    setTotalRecievable(data.totalRecievable)
     
-    }else{}
+    setTotalRecievable(data.totalRecievable)
+    setTotalDebts(data.totalDebts)
+    setDebtors(data.debtorsData)
+    
+    }else(error){
+    throw new error(response.data.error);
+    }
   )
   const cards = [
     {
@@ -37,13 +45,13 @@ function Dashboard() {
       id: 2,
       icon: "fa-solid fa-users",
       description: "Total  Debtors",
-      value: "500",
+      value: {`₦ ${totalDebts}`},
     },
     {
       id: 3,
       icon: "fa-solid fa-warehouse",
       description: "Overdue Amount",
-      value: "₦ 573,000",
+      value: {`₦ ${overdueAmount}`},
     },
   ];
 
@@ -58,71 +66,10 @@ function Dashboard() {
     },
   ];
 
-  const debtors = [
-    { name: "John Adeyemi", amount: "$1,200", due_time: "• 3d overdue" },
-    { name: "Grace O.", amount: "$430", due_time: "• due today" },
-    { name: "Tunde K.", amount: "$800", due_time: "• due tomorrow" },
-    { name: "Sarah M.", amount: "$150", due_time: "• due in 2 days" },
-    { name: "Sarah M.", amount: "$150", due_time: "• due in 2 days" },
-  ];
-
   const [showMore, setShowMore] = useState(false);
   const visibleDebts = showMore ? debtors : debtors.slice(0, 3);
 
-  const audioChunks = useRef([]);
-  const mediaRecoder = useRef(null);
-  const [startRecording, setStartRecording] = useState(false);
-
-  const startedRecording = async () => {
-    console.log("started recording");
-    audioChunks.current = [];
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecoder.current = new MediaRecorder(stream);
-      mediaRecoder.current.ondataavailable = (e) => {
-        if (!e.data.size > 0) return;
-        audioChunks.current.push(e.data);
-      };
-      mediaRecoder.current.start();
-      setStartRecording(true);
-    } catch (error) {
-      console.log(String(error));
-    }
-  };
-  const stopRecording = () => {
-    if (!mediaRecoder.current) return;
-    mediaRecoder.current.onstop = async () => {
-      const blob = new Blob(audioChunks.current, { type: "audio/webm" });
-      const form = new FormData();
-      form.append("audio", blob, "user_voice.webm");
-      mediaRecoder.current.stream?.getTracks().forEach((track) => track.stop());
-      mediaRecoder.current = null;
-      setStartRecording(false);
-      try {
-        const res = await fetch(`${API_URL}/audio`, {
-          method: "POST",
-          body: form,
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.detail || `Audio upload failed: ${res.status}`);
-        }
-        navigate(`/add-debt/${data.json}`);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    mediaRecoder.current.stop();
-  };
-
-  const handleRecord = () => {
-    if (startRecording) {
-      stopRecording();
-    } else {
-      startedRecording();
-    }
-  };
-
+ 
   const handleQuickAction = (description) => {
     if (description === "New Debt") navigate("/add-debt");
     if (description === "Update Debt") {
@@ -137,27 +84,6 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <DashboardHeader headerObjecst={{ alias: "JD", name: "John Doe" }} />
-
-      <div className="voice-board">
-        <div className="voice-board-header">
-          <h3>Voice Record Keeping</h3>
-          <span className={`voice-status ${startRecording ? "live" : ""}`}>
-            {startRecording ? "Recording…" : "Idle"}
-          </span>
-        </div>
-
-        <div className="voice-board-body">
-          <button
-            className={`voice-mic-btn ${startRecording ? "recording" : ""}`}
-            onClick={handleRecord}
-          >
-            <i className="fa-solid fa-microphone"></i>
-          </button>
-          <p className="voice-hint">
-            {startRecording ? "Tap to stop" : "Tap to start recording"}
-          </p>
-        </div>
-      </div>
 
       <div className="dashboard-quick-actions">
         <span className="dashboard-category-label">Quick Actions</span>
@@ -189,13 +115,13 @@ function Dashboard() {
           </h2>
 
           <div className="due-list">
-            {visibleDebts.map((debtor, index) => {
+            {visibleDebts.map((debtors, index) => {
               return (
                 <DueCard
                   key={index}
-                  name={debtor.name}
-                  amount={debtor.amount}
-                  due_time={debtor.due_time}
+                  name={debtors.name}
+                  amount={debtors.amount}
+                  due_time={debtors.due_time}
                 />
               );
             })}
