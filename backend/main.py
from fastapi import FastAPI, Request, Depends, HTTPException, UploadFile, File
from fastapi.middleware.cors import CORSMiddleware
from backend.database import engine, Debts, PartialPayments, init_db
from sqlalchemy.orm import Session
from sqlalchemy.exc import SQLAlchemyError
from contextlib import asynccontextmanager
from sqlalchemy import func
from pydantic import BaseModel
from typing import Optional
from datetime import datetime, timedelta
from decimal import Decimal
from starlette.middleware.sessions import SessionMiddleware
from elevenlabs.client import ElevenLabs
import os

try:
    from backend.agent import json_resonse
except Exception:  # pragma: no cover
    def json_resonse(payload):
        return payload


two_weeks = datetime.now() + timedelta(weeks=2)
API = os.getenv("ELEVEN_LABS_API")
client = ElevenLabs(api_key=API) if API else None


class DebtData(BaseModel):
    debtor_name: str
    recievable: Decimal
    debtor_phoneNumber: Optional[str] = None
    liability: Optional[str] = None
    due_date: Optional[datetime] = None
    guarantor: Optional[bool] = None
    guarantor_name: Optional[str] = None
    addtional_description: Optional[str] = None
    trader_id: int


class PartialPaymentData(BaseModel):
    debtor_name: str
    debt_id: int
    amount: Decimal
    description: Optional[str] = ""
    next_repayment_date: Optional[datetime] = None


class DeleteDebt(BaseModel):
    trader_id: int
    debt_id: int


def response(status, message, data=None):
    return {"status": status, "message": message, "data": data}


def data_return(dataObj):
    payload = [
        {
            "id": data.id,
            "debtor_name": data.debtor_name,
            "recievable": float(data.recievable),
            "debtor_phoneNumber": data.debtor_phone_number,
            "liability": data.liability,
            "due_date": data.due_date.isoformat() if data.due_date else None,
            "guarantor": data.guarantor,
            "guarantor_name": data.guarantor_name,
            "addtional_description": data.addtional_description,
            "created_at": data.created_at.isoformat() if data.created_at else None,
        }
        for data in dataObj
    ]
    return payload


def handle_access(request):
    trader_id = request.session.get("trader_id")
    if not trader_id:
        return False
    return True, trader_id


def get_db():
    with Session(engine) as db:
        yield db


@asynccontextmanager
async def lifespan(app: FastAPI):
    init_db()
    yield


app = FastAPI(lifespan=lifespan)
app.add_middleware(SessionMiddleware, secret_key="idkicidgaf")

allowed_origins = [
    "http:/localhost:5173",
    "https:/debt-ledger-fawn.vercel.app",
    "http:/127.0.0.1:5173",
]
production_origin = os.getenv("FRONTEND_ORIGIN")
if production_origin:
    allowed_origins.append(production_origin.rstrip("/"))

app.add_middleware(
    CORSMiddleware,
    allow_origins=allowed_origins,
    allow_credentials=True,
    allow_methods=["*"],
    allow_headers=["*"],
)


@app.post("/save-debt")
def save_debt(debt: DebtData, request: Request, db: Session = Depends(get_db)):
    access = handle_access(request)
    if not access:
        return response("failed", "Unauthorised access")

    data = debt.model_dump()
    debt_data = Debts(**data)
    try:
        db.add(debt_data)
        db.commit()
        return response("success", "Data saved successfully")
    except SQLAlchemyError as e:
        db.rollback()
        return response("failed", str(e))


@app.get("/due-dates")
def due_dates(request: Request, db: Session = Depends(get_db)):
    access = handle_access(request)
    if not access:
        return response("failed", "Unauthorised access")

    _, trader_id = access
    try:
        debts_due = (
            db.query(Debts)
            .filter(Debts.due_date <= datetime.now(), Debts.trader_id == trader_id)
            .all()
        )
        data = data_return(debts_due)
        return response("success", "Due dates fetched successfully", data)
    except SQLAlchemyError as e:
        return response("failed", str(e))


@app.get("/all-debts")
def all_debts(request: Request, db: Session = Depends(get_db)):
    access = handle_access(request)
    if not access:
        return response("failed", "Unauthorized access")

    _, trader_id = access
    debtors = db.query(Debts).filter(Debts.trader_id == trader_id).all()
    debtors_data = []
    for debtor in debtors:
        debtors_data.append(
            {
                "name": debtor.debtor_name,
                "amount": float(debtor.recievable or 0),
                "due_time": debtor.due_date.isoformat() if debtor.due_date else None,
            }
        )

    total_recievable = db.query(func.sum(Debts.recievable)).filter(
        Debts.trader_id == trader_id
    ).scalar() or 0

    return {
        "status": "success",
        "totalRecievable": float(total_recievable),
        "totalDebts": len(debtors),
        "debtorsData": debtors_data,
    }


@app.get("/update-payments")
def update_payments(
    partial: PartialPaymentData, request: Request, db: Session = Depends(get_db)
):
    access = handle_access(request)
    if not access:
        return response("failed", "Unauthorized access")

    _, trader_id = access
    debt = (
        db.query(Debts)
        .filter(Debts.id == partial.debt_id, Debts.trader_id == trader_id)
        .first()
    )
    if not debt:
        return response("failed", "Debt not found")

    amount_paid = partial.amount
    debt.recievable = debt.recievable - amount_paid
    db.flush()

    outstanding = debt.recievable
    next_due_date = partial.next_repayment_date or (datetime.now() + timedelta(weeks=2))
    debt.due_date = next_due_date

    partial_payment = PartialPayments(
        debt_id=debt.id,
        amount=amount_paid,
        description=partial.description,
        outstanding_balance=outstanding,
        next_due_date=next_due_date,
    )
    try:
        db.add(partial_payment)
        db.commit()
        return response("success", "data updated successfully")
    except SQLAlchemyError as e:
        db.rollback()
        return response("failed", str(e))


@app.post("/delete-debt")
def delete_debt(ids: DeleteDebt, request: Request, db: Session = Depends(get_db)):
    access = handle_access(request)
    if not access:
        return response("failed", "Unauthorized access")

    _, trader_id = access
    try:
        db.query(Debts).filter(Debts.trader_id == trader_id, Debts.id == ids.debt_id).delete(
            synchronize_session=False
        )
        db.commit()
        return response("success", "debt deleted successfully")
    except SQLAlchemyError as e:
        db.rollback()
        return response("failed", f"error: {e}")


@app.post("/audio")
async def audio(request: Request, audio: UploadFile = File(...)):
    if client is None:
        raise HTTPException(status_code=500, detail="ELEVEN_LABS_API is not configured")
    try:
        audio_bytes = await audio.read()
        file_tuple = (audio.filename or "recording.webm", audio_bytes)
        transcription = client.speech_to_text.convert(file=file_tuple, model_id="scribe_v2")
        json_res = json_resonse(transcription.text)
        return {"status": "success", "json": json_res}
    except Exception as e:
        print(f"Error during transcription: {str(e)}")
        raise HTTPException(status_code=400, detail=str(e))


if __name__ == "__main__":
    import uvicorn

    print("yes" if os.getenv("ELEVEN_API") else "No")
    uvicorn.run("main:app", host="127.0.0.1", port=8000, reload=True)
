@@ -1,0 +1,143 @@
+import Card from "../card";
+import DashboardHeader from "../header";
+import QuickActionsBtn from "../actionsBtn";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import DueCard from "../dueCard";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || "https://debt-ledger-dxzv.onrender.com";
+const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
+
+function Dashboard() {
+  const [totalRecievable, setTotalRecievable] = useState(0);
+  const [totalDebts, setTotalDebts] = useState(0);
+  const [overdueAmount, setOverdueAmount] = useState(0);
+  const [debtors, setDebtors] = useState([]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("/all-debts");
+        const payload = response?.data?.data ?? response?.data ?? {};
+
+        setTotalRecievable(Number(payload.totalRecievable ?? 0));
+        setTotalDebts(Number(payload.totalDebts ?? 0));
+        setOverdueAmount(Number(payload.overdueAmount ?? 0));
+        setDebtors(Array.isArray(payload.debtorsData) ? payload.debtorsData : []);
+      } catch (error) {
+        console.error("Dashboard fetch error:", error);
+        setTotalRecievable(0);
+        setTotalDebts(0);
+        setOverdueAmount(0);
+        setDebtors([]);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const cards = [
+    {
+      id: 1,
+      icon: "fa-solid fa-money-bill-trend-up",
+      description: "Total Amount Owed To You",
+      value: totalRecievable,
+    },
+    {
+      id: 2,
+      icon: "fa-solid fa-users",
+      description: "Total Debtors",
+      value: `₦ ${totalDebts}`,
+    },
+    {
+      id: 3,
+      icon: "fa-solid fa-warehouse",
+      description: "Overdue Amount",
+      value: `₦ ${overdueAmount}`,
+    },
+  ];
+
+  const quickActions = [
+    { id: 1, icon: "fa-solid fa-plus", description: "New Debt" },
+    { id: 2, icon: "fa-solid fa-pen-to-square", description: "Update Debt" },
+    { id: 3, icon: "fa-solid fa-trash", description: "Delete Debt" },
+    { id: 4, icon: "fa-solid fa-file-invoice-dollar", description: "View Debts" },
+  ];
+
+  const [showMore, setShowMore] = useState(false);
+  const visibleDebts = Array.isArray(debtors)
+    ? showMore
+      ? debtors
+      : debtors.slice(0, 3)
+    : [];
+
+  const handleQuickAction = (description) => {
+    if (description === "New Debt") navigate("/add-debt");
+    if (description === "Update Debt") navigate("/debts");
+    if (description === "View Debts") navigate("/debts");
+    if (description === "Generate Report") window.print();
+  };
+
+  return (
+    <div className="dashboard">
+      <DashboardHeader headerObjecst={{ alias: "JD", name: "John Doe" }} />
+
+      <div className="dashboard-quick-actions">
+        <span className="dashboard-category-label">Quick Actions</span>
+
+        <div className="quick-actions-btn-container">
+          {quickActions.map((action) => (
+            <QuickActionsBtn
+              key={action.id}
+              icon={action.icon}
+              description={action.description}
+              onClick={() => handleQuickAction(action.description)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <span className="dashboard-category-label">Analytics</span>
+
+        <div className="due-container">
+          <h2>
+            <i className="fa-solid fa-triangle-exclamation" aria-hidden="true" />
+            Due now / overdue
+          </h2>
+
+          <div className="due-list">
+            {visibleDebts.map((debt, index) => (
+              <DueCard
+                key={`${debt.name}-${index}`}
+                name={debt.name}
+                amount={debt.amount}
+                due_time={debt.due_time}
+              />
+            ))}
+          </div>
+
+          {debtors.length > 3 && (
+            <button className="see-more-btn" onClick={() => setShowMore(!showMore)}>
+              {showMore ? "See Less" : "See More"}
+            </button>
+          )}
+        </div>
+
+        <div className="dashboard-analytics-section">
+          {cards.map((card) => (
+            <Card key={card.id} cardObject={card} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Dashboard;
