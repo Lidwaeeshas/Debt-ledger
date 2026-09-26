@@ -12,6 +12,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function Dashboard() {
   const [totalRecievable,setTotalRecievable] = useState("-")
+  const [totalDebts,settotalDebts] = useState("-")
   
   const base = axios.create({
     baseUrl:"https://debt-ledger-dxzv.onrender.com"
@@ -20,6 +21,8 @@ function Dashboard() {
   useRef(
     try{
     const response = await axios.get("/all-deebts")
+    const data = response.data
+    setTotalRecievable(data.totalRecievable)
     
     }else{}
   )
