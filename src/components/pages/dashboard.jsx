@@ -5,17 +5,30 @@ import DebtMainDetails from "../debtsProfiles";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import DueCard from "../dueCard";
+import axios from "axios"
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Dashboard() {
+  const [totalRecievable,setTotalRecievable] = useState("-")
+  
+  const base = axios.create({
+    baseUrl:"https://debt-ledger-dxzv.onrender.com"
+    })
   const navigate = useNavigate();
+  useRef(
+    try{
+    const response = await axios.get("/all-deebts")
+    
+    }else{}
+  )
   const cards = [
     {
       id: 1,
       icon: "fa-solid fa-money-bill-trend-up",
       description: "Total Amount Owed To You",
-      value: "$45,231.89",
+      value: {totalRecievable},
     },
     {
       id: 2,
