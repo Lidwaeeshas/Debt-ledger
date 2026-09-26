@@ -4,6 +4,7 @@ from backend.database import engine, Debts, Traders, PartialPayments, init_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from contextlib import asynccontextmanager
+from sqlalchemy import func
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
@@ -143,12 +144,20 @@ def all_debts(request, db: Session = Depends(get_db)):
     trader_id = handle_access[1]
     trader_debts = db.query(Debts).filter_by(trader_id=trader_id).all()
     all_debts = data_return(trader_debts)
-    
+    debtors = db.query(Debts).filter_by(trader_id = trader_id).all()
+    debtors_data = []
+    for debtor in debtors:
+        data = {
+            "name":debtor.debtor_name,
+            "amount":debtor.receivable,
+            "due_time":debtor.due_time
+        }
+        debtors_data.append(data)
     totalRecievable = db.query(func.sum(Debts.recievable)).filter(Debts.traders_id == trader_id).scalar()
     return {
         "totalRecievable":totalRecievable,
         "totalDebts":len(all_debts),
-        
+        "debtorsData":debtors_data
     }
 
 
