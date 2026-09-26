@@ -30,7 +30,7 @@ function Dashboard() {
     setTotalDebts(data.totalDebts)
     setDebtors(data.debtorsData)
     
-    }else(error){
+    }catch(error){
     throw new error(response.data.error);
     }
   )
