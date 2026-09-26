@@ -50,13 +50,13 @@ function Dashboard() {
       id: 2,
       icon: "fa-solid fa-users",
       description: "Total  Debtors",
-      value: {`₦ ${totalDebts}`},
+      value: `₦ ${totalDebts}`,
     },
     {
       id: 3,
       icon: "fa-solid fa-warehouse",
       description: "Overdue Amount",
-      value: {`₦ ${overdueAmount}`},
+      value: `₦ ${overdueAmount}`,
     },
   ];
 
