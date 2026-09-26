@@ -143,7 +143,13 @@ def all_debts(request, db: Session = Depends(get_db)):
     trader_id = handle_access[1]
     trader_debts = db.query(Debts).filter_by(trader_id=trader_id).all()
     all_debts = data_return(trader_debts)
-    return all_debts
+    
+    totalRecievable = db.query(func.sum(Debts.recievable)).filter(Debts.traders_id == trader_id).scalar()
+    return {
+        "totalRecievable":totalRecievable,
+        "totalDebts":len(all_debts),
+        
+    }
 
 
 @app.get("/update-payments")
