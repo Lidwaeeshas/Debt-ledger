@@ -21,19 +21,24 @@ function Dashboard() {
     baseUrl:"https://debt-ledger-dxzv.onrender.com"
     })
   const navigate = useNavigate();
-  useRef(
-    try{
-    const response = await axios.get("/all-deebts")
-    const data = response.data
-    
-    setTotalRecievable(data.totalRecievable)
-    setTotalDebts(data.totalDebts)
-    setDebtors(data.debtorsData)
-    
-    }catch(error){
-    throw new error(response.data.error);
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/all-deebts");
+      const data = response.data;
+      
+      setTotalRecievable(data.totalRecievable);
+      setTotalDebts(data.totalDebts);
+      setDebtors(data.debtorsData);
+    } catch (error) {
+      console.error(error);
+      throw new Error(error.response?.data?.error || "Failed to fetch data");
     }
-  )
+  };
+
+  fetchData(); 
+}, []); 
+
   const cards = [
     {
       id: 1,
