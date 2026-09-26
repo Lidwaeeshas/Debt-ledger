@@ -2,9 +2,10 @@ from sqlalchemy import Column,Integer,create_engine,String,ForeignKey,Numeric,Da
 from sqlalchemy.orm import Session,relationship,DeclarativeBase,Mapped,MappedColumn
 from decimal import Decimal
 from datetime import datetime,timedelta
+import os
 
 
-engine = create_engine("sqlite:///mydb.db")
+engine = create_engine(os.getenv("DATABASE"))
 
 print(1)
 def two_weeks_from_now_on():
